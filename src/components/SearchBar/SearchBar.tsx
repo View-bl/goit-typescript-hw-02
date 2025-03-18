@@ -1,13 +1,19 @@
-import { useState } from "react";
-import styles from "./SearchBar.module.css";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { toast } from "react-hot-toast";
+import styles from "./SearchBar.module.css";
 
-const SearchBar = ({ onSubmit }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+interface SearchBarProps {
+  onSubmit: (query: string) => void;
+}
 
-  const handleChange = (e) => setSearchTerm(e.target.value);
+const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const handleSubmit = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!searchTerm.trim()) {
       toast.error("Поле пошуку не може бути пустим");

@@ -1,5 +1,4 @@
-// App.jsx
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import SearchBar from "./components/SearchBar/SearchBar";
@@ -7,20 +6,21 @@ import ImageGallery from "./components/ImageGallery/ImageGallery";
 import Loader from "./components/Loader/Loader";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
-import ImageModal from "./components/ImageModal/ImageModal"; 
+import ImageModal from "./components/ImageModal/ImageModal";
+import { Image } from "./types";
 import "./App.css";
 
 const API_URL = "https://api.unsplash.com/search/photos";
 const API_KEY = "63mTEv5K_sw2vrKDcPwA3heOzkIZ2xx_yXjq22kpxMk";
 
-const App = () => {
-  const [query, setQuery] = useState("");
-  const [images, setImages] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
+const App: React.FC = () => {
+  const [query, setQuery] = useState<string>("");
+  const [images, setImages] = useState<Image[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
     if (!query.trim()) return;
@@ -56,11 +56,10 @@ const App = () => {
     };
 
     fetchImages();
-
     return () => controller.abort();
   }, [query, page]);
 
-  const handleSearchSubmit = (searchTerm) => {
+  const handleSearchSubmit = (searchTerm: string) => {
     if (!searchTerm.trim()) {
       toast.error("Поле пошуку не може бути пустим");
       return;
@@ -81,7 +80,7 @@ const App = () => {
     }, 500);
   };
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image: Image) => {
     setSelectedImage(image);
   };
 
@@ -94,12 +93,11 @@ const App = () => {
       <Toaster />
       <SearchBar onSubmit={handleSearchSubmit} />
       {error && <ErrorMessage message={error} />}
-      <ImageGallery images={images || []} onImageClick={handleImageClick} />
+      <ImageGallery images={images} onImageClick={handleImageClick} />
       {loading && <Loader />}
-      {Array.isArray(images) &&
-        images.length > 0 &&
-        page < totalPages &&
-        !loading && <LoadMoreBtn onClick={handleLoadMore} />}
+      {images.length > 0 && page < totalPages && !loading && (
+        <LoadMoreBtn onClick={handleLoadMore} />
+      )}
       {selectedImage && (
         <ImageModal image={selectedImage} onClose={handleCloseModal} />
       )}
